@@ -32,10 +32,23 @@ def vae_encode_process():
         image_data = message['image_data']
 
         # 将图像数据转换为Tensor
+        # image = Image.open(io.BytesIO(base64.b64decode(image_data))).convert("RGB")
+        # image = image.resize((512, 512))
+        # image_tensor = torch.tensor([list(image.getdata(band=i)) for i in range(3)], dtype=torch.float32) / 255.0
+        # image_tensor = image_tensor.unsqueeze(0)
+
+
+        import torchvision.transforms as transforms
+
+        # 定义图像转换
+        transform = transforms.Compose([
+            transforms.Resize((512, 512)),
+            transforms.ToTensor(),  # 将PIL图像转换为Tensor，并且通道顺序为 [C, H, W]，像素值归一化为 [0, 1]
+        ])
+
+        # 将图像数据转换为Tensor
         image = Image.open(io.BytesIO(base64.b64decode(image_data))).convert("RGB")
-        image = image.resize((512, 512))
-        image_tensor = torch.tensor([list(image.getdata(band=i)) for i in range(3)], dtype=torch.float32) / 255.0
-        image_tensor = image_tensor.unsqueeze(0)
+        image_tensor = transform(image).unsqueeze(0)  # 增加一个批次维度，形状变为 [1, 3, 512, 512]
 
         # VAE编码
         with torch.no_grad():

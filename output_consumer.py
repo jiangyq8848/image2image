@@ -34,5 +34,5 @@ def receive_images(output_folder):
     channel.start_consuming()
 
 if __name__ == '__main__':
-    output_folder = 'output_images'
+    output_folder = '/Users/gaoty/Desktop/纯色背景商品图/rr'
     receive_images(output_folder)
